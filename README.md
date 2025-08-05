@@ -39,6 +39,7 @@ I prompted Claude iteratively, providing more information with each iteration.
 ## Limitations
 
 - Limited feature set at present, but more are planned for upcoming releases.
+- PDF - DOCX conversion and vice versa is very basic right now. Plan to enhance it soon.
 
 ## Contribution Guidelines
 
