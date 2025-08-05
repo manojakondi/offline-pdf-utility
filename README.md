@@ -35,7 +35,7 @@ The application follows a modular architecture for better organization:
 - PDF-Lib.js (PDF manipulation)
 - Mammoth.js (Word document processing)
 - PDF.js (PDF rendering)
-- Claude Sonnet 4 (LLM for AI-assisted development)
+- Claude Sonnet 4/Qwen-Coder3 on Windsurf
 
 ## Features
 
