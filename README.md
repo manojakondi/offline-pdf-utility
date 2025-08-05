@@ -1,38 +1,80 @@
-# offline-pdf-utility
+# PDF Toolkit
 
-An **AI-coded**, completely offline, single-page PDF utility offering various PDF operations like merging and extracting PDFs, and removing passwords—all in your browser with full privacy.
+An **AI-coded**, completely offline PDF toolkit offering comprehensive PDF operations including splitting, merging, converting, editing, compressing, and password protection—all in your browser with full privacy.
 
 ## Setup
 
-No setup required!  
-Just clone the repo and open the HTML page in your browser.
+No complex setup required! Choose any of these simple methods to get started:
+
+### Quick Start (Recommended)
+1. Download the latest release or clone the repository
+2. Open `index.html` directly in your browser
+
+### Local Server Method (For Development)
+1. Fork the repository
+2. Clone your fork: `git clone https://github.com/your-username/offline-pdf-utility.git`
+3. Navigate to the project directory
+4. Start a local server:
+   - Python: `python -m http.server 8000`
+   - Node.js: `npx http-server`
+5. Open `http://localhost:8000` in your browser
+
+### Project Structure
+The application follows a modular architecture for better organization:
+- `index.html` - Main application file
+- `assets/css/` - Dedicated CSS files for styling
+- `assets/js/` - JavaScript modules for functionality
+- `assets/images/` - Image assets and icons
+- `README.md` - This documentation file
 
 ## Technologies
 
-- HTML
-- JavaScript
-- Claude Sonnet 4 (LLM)
+- HTML5
+- CSS3 (Modular structure with dedicated component styles)
+- JavaScript (ES6+ with modular architecture)
+- PDF-Lib.js (PDF manipulation)
+- Mammoth.js (Word document processing)
+- PDF.js (PDF rendering)
+- Claude Sonnet 4 (LLM for AI-assisted development)
 
 ## Features
 
-- **Completely offline** – full privacy ensured.
-- **Merge** multiple PDFs into one file.
-- **Extract** pages from a PDF into a new PDF file.
-- **Remove password** from a protected PDF (you’ll need to provide the password).
-- More exciting features planned for future updates!
+- **Completely Offline** – Full privacy ensured with zero server-side processing
+- **Split PDF** – Extract specific pages or page ranges with precise control
+- **Merge PDFs** – Combine multiple PDFs into one seamless document
+- **Edit Pages** – Rotate, reorder (full drag-and-drop), and delete specific pages
+- **Convert Files** – Images to PDF, PDF to images, Word docs to PDF, text files to PDF
+- **Compress PDF** – Reduce file size while maintaining quality
+- **Password Tools** – Add or remove password protection with AES-256 encryption
+- **Modern UI** – Clean, responsive design with intuitive drag-and-drop functionality and elegant theme
+- **Enhanced User Experience** – Smooth animations, visual feedback, and consistent interface design
 
 ## App Interface
 
-![App Interface](https://github.com/user-attachments/assets/4e4fb33f-7aba-4d1a-9a93-d7c707697b6a)
+![PDF Toolkit Interface](assets/images/screenshot.png)
+
+*Updated interface with enhanced drag-and-drop page reordering, improved tab visibility, and elegant color scheme*
 
 ## Limitations
 
-- Limited feature set at present, but more are planned for upcoming releases.
+- Large PDF files may require significant processing time and memory
+- Browser compatibility limited to modern browsers supporting HTML5 and ES6+
+- File size limitations based on browser memory constraints
+- No cloud storage integration (by design for privacy)
+- Advanced PDF features (annotations, forms) not yet supported
 
 ## Contribution Guidelines
 
-- Create issues for bugs or to suggest new features (especially those found in popular online utilities).
-- Want to contribute code or enhancements? Fork the repo, create a new issue to discuss, and open a PR with a detailed description of your changes.
+We welcome contributions! Here's how you can help:
+
+1. **Report Issues** - Found a bug or have a feature idea? Open an issue with a clear description.
+2. **Code Contributions** - Fork the repo, make your changes, and submit a pull request.
+3. **Feature Requests** - Suggest new features, especially those you've seen in popular online PDF tools or some new ones which those tools don't support.
+
+Before submitting a PR, please:
+- Create an issue to discuss significant changes
+- Ensure your code follows the existing style
+- Test your changes thoroughly
 
 ## Contact
 

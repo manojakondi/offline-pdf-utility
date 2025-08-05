@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Toolkit - Advanced Offline PDF Processing</title>
+    
+    <!-- External Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+    <link rel="stylesheet" href="assets/css/tabs.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 PDF Toolkit</h1>
+            <p>Advanced offline PDF processing - Split, Merge, Convert, Rotate & More!</p>
+        </div>
+
+        <div class="toolkit">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('split')">📄 Split PDF</button>
+                <button class="tab" onclick="switchTab('merge')">🔗 Merge PDFs</button>
+                <button class="tab" onclick="switchTab('edit')">✏️ Edit Pages</button>
+                <button class="tab" onclick="switchTab('convert')">🔄 Convert</button>
+                <button class="tab" onclick="switchTab('compress')">📦 Compress</button>
+                <button class="tab" onclick="switchTab('protect')">🔒 Password Tools</button>
+            </div>
+
+            <!-- Split PDF Tab -->
+            <div id="split" class="tab-content active">
+                <h3>📄 Split PDF</h3>
+                <div class="drop-zone" onclick="document.getElementById('splitFiles').click()" ondrop="handleDrop(event, 'split')" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                    <div class="drop-zone-icon">📄</div>
+                    <p><strong>Drop PDF files here</strong> or click to select</p>
+                    <p>Extract specific pages or ranges from your PDFs</p>
+                </div>
+                <input type="file" id="splitFiles" multiple accept=".pdf" style="display: none;" onchange="handleFileSelect(event, 'split')">
+                
+                <div id="splitFileList" class="file-list"></div>
+                
+                <div class="form-group">
+                    <label for="pageRange">Pages to extract (e.g., 1-3, 5, 7-10):</label>
+                    <input type="text" id="pageRange" placeholder="1-3, 5, 7-10">
+                    <small>Leave empty to extract all pages individually</small>
+                </div>
+                <button class="btn btn-primary" onclick="processSplit()">
+                    ✂️ Extract Pages
+                </button>
+            </div>
+
+            <!-- Merge PDFs Tab -->
+            <div id="merge" class="tab-content">
+                <h3>🔗 Merge PDFs</h3>
+                <div class="drop-zone" onclick="document.getElementById('mergeFiles').click()" ondrop="handleDrop(event, 'merge')" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                    <div class="drop-zone-icon">🔗</div>
+                    <p><strong>Drop PDF files here</strong> or click to select</p>
+                    <p>Combine multiple PDFs into one document</p>
+                </div>
+                <input type="file" id="mergeFiles" multiple accept=".pdf" style="display: none;" onchange="handleFileSelect(event, 'merge')">
+                
+                <div id="mergeFileList" class="file-list"></div>
+                
+                <button class="btn btn-primary" onclick="processMerge()">
+                    🔗 Merge PDFs
+                </button>
+            </div>
+
+            <!-- Edit Pages Tab -->
+            <div id="edit" class="tab-content">
+                <h3>✏️ Edit Pages</h3>
+                <div class="drop-zone" onclick="document.getElementById('editFiles').click()" ondrop="handleDrop(event, 'edit')" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                    <div class="drop-zone-icon">✏️</div>
+                    <p><strong>Drop a PDF file here</strong> or click to select</p>
+                    <p>Rotate, reorder, or delete pages from your PDF</p>
+                </div>
+                <input type="file" id="editFiles" accept=".pdf" style="display: none;" onchange="handleFileSelect(event, 'edit')">
+                
+                <div id="editFileList" class="file-list"></div>
+                
+                <div id="pageEditor" class="page-editor" style="display: none;">
+                    <div class="editor-controls">
+                        <button class="btn btn-secondary" onclick="selectAllPages()">Select All</button>
+                        <button class="btn btn-secondary" onclick="deselectAllPages()">Deselect All</button>
+                        <button class="btn btn-danger" onclick="deleteSelectedPages()">🗑️ Delete Selected</button>
+                        <button class="btn btn-primary" onclick="saveEditedPDF()">💾 Save Changes</button>
+                    </div>
+                    <div id="pageGrid" class="page-grid"></div>
+                </div>
+            </div>
+
+            <!-- Convert Tab -->
+            <div id="convert" class="tab-content">
+                <h3>🔄 Convert Files</h3>
+                <div class="conversion-options">
+                    <div class="form-group">
+                        <label for="conversionType">Conversion Type:</label>
+                        <select id="conversionType" onchange="updateConversionUI()">
+                            <option value="to-pdf">Images/Documents → PDF</option>
+                            <option value="pdf-to-images">PDF → Images</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="toPdfConverter">
+                    <div class="drop-zone" onclick="document.getElementById('convertFiles').click()" ondrop="handleDrop(event, 'convert')" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                        <div class="drop-zone-icon">🔄</div>
+                        <p><strong>Drop files here</strong> or click to select</p>
+                        <p>Supports: Images (JPG, PNG, GIF), Word docs (.docx), Text files</p>
+                    </div>
+                    <input type="file" id="convertFiles" multiple accept=".jpg,.jpeg,.png,.gif,.docx,.txt" style="display: none;" onchange="handleFileSelect(event, 'convert')">
+                </div>
+
+                <div id="pdfToImagesConverter" style="display: none;">
+                    <div class="drop-zone" onclick="document.getElementById('pdfToImageFiles').click()" ondrop="handleDrop(event, 'pdf-to-images')" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                        <div class="drop-zone-icon">🖼️</div>
+                        <p><strong>Drop PDF files here</strong> or click to select</p>
+                        <p>Convert PDF pages to individual images</p>
+                    </div>
+                    <input type="file" id="pdfToImageFiles" multiple accept=".pdf" style="display: none;" onchange="handleFileSelect(event, 'pdf-to-images')">
+                    
+                    <div class="form-group">
+                        <label for="imageFormat">Output Format:</label>
+                        <select id="imageFormat">
+                            <option value="png">PNG</option>
+                            <option value="jpeg">JPEG</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="imageQuality">Quality (1-100):</label>
+                        <input type="range" id="imageQuality" min="1" max="100" value="90">
+                        <span id="qualityValue">90</span>
+                    </div>
+                </div>
+                
+                <div id="convertFileList" class="file-list"></div>
+                
+                <button class="btn btn-primary" onclick="processConvert()">
+                    🔄 Convert Files
+                </button>
+            </div>
+
+            <!-- Compress Tab -->
+            <div id="compress" class="tab-content">
+                <h3>📦 Compress PDF</h3>
+                <div class="drop-zone" onclick="document.getElementById('compressFiles').click()" ondrop="handleDrop(event, 'compress')" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                    <div class="drop-zone-icon">📦</div>
+                    <p><strong>Drop PDF files here</strong> or click to select</p>
+                    <p>Reduce file size while maintaining quality</p>
+                </div>
+                <input type="file" id="compressFiles" multiple accept=".pdf" style="display: none;" onchange="handleFileSelect(event, 'compress')">
+                
+                <div id="compressFileList" class="file-list"></div>
+                
+                <div class="form-group">
+                    <label for="compressionLevel">Compression Level:</label>
+                    <select id="compressionLevel">
+                        <option value="low">Low (Better Quality)</option>
+                        <option value="medium" selected>Medium (Balanced)</option>
+                        <option value="high">High (Smaller Size)</option>
+                    </select>
+                </div>
+                
+                <button class="btn btn-primary" onclick="processCompress()">
+                    📦 Compress PDFs
+                </button>
+            </div>
+
+            <!-- Password Tools Tab -->
+            <div id="protect" class="tab-content">
+                <h3>🔒 Password Tools</h3>
+                <div class="drop-zone" onclick="document.getElementById('protectFiles').click()" ondrop="handleDrop(event, 'protect')" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                    <div class="drop-zone-icon">🔒</div>
+                    <p><strong>Drop PDF files here</strong> or click to select</p>
+                    <p>Add or remove password protection</p>
+                </div>
+                <input type="file" id="protectFiles" multiple accept=".pdf" style="display: none;" onchange="handleFileSelect(event, 'protect')">
+                
+                <div id="protectFileList" class="file-list"></div>
+                
+                <div class="form-group">
+                    <label for="protectAction">Action:</label>
+                    <select id="protectAction" onchange="togglePasswordFields()">
+                        <option value="add">Add Password Protection</option>
+                        <option value="remove">Remove Password Protection</option>
+                    </select>
+                </div>
+                
+                <div id="currentPasswordGroup" class="form-group">
+                    <label for="currentPassword">Current Password:</label>
+                    <input type="password" id="currentPassword" placeholder="Enter current password">
+                </div>
+                
+                <div id="newPasswordGroup" class="form-group">
+                    <label for="newPassword">New Password:</label>
+                    <input type="password" id="newPassword" placeholder="Enter new password">
+                </div>
+                
+                <button class="btn btn-primary" onclick="processProtection()">
+                    🔒 Process Files
+                </button>
+            </div>
+        </div>
+
+        <!-- Progress Modal -->
+        <div id="progressModal" class="modal">
+            <div class="modal-content">
+                <h3>Processing Files...</h3>
+                <div class="progress-bar">
+                    <div id="progressFill" class="progress-fill"></div>
+                </div>
+                <p id="progressText">Initializing...</p>
+            </div>
+        </div>
+
+        <!-- Alert Modal -->
+        <div id="alertModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeAlert()">&times;</span>
+                <div id="alertContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/utils.js"></script>
+    <script src="assets/js/fileHandlers.js"></script>
+    <script src="assets/js/pdfOperations.js"></script>
+    <script src="assets/js/pageEditor.js"></script>
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

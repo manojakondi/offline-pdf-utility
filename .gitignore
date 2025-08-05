@@ -1,0 +1,95 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# Build outputs
+/dist
+/build
+/*.min.js
+/*.min.css
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# OS generated files
+.DS_Store?
+ ehthumbs.db
+ Icon?
+ [Tt]humbs.db
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Temporary folders
+tmp/
+temp/
+
+# Environment files
+.env*
+
+# PDF files (if you don't want to track generated PDFs)
+*.pdf
+
+# Screenshots (if you're adding screenshots to the repo)
+screenshots/
+*.png
+*.jpg
+*.jpeg
+*.gif
+
+# Backup files
+*.bak
+*.backup
+
+# Local development files that shouldn't be tracked
+*.local
+*.dev
+
+# HTTP server files (if using Python's http.server)
+*.pyc
+__pycache__/
+
+# Merge files
+*.orig
+*.rej
+
+# Editor specific files
+*.sublime-project
+*.sublime-workspace
+*.code-workspace
+
+# Debug files
+*.debug
+*.stackdump
+
+# Coverage reports
+coverage/
+*.lcov
+
+# Test reports
+*.test.js
+*.spec.js
+
+# Temporary files
+*.tmp
+*.temp
