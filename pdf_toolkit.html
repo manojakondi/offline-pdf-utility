@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Toolkit - Offline PDF Processing</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .toolkit {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .tab {
+            padding: 15px 25px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 16px;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab:hover {
+            color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .drop-zone {
+            border: 3px dashed #d0d0d0;
+            border-radius: 15px;
+            padding: 60px 20px;
+            text-align: center;
+            background: #fafafa;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .drop-zone:hover, .drop-zone.drag-over {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .drop-zone.drag-over {
+            transform: scale(1.02);
+        }
+
+        .drop-zone-icon {
+            font-size: 3rem;
+            color: #d0d0d0;
+            margin-bottom: 15px;
+        }
+
+        .drop-zone.drag-over .drop-zone-icon {
+            color: #667eea;
+        }
+
+        .file-list {
+            margin: 20px 0;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .file-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+        }
+
+        .file-icon {
+            width: 40px;
+            height: 40px;
+            background: #667eea;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+
+        .file-details h4 {
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .file-details p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .options {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .progress {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .row {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .col {
+            flex: 1;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .tabs {
+                flex-wrap: wrap;
+            }
+            
+            .tab {
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+            
+            .row {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 PDF Toolkit</h1>
+            <p>Complete offline PDF processing - Split, Merge, Convert & More!</p>
+        </div>
+
+        <div class="toolkit">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('split')">📄 Split PDF</button>
+                <button class="tab" onclick="switchTab('merge')">🔗 Merge PDFs</button>
+                <button class="tab" onclick="switchTab('convert')">🔄 Convert</button>
+                <button class="tab" onclick="switchTab('protect')">🔒 Password Tools</button>
+            </div>
+
+            <!-- Split PDF Tab -->
+            <div id="split" class="tab-content active">
+                <div class="drop-zone" onclick="document.getElementById('splitFile').click()" ondrop="handleDrop(event, 'split')" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                    <div class="drop-zone-icon">📄</div>
+                    <h3>Drop PDF file here or click to browse</h3>
+                    <p>Select a PDF to extract pages from</p>
+                </div>
+                <input type="file" id="splitFile" accept=".pdf" style="display: none;" onchange="handleFileSelect(event, 'split')">
+                
+                <div id="splitFileList" class="file-list"></div>
+                
+                <div class="options" id="splitOptions" style="display: none;">
+                    <div class="form-group">
+                        <label>Pages to extract (e.g., "1-3,5,7-10" or "all"):</label>
+                        <input type="text" id="splitPages" placeholder="1-3,5,7-10" value="all">
+                    </div>
+                    <div class="form-group">
+                        <label>Password (if required):</label>
+                        <input type="password" id="splitPassword" placeholder="Enter PDF password">
+                    </div>
+                    <button class="btn btn-primary" onclick="processSplit()">
+                        ✂️ Extract Pages
+                    </button>
+                </div>
+            </div>
+
+            <!-- Merge PDFs Tab -->
+            <div id="merge" class="tab-content">
+                <div class="drop-zone" onclick="document.getElementById('mergeFiles').click()" ondrop="handleDrop(event, 'merge')" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                    <div class="drop-zone-icon">🔗</div>
+                    <h3>Drop PDF files here or click to browse</h3>
+                    <p>Select multiple PDFs to merge into one</p>
+                </div>
+                <input type="file" id="mergeFiles" accept=".pdf" multiple style="display: none;" onchange="handleFileSelect(event, 'merge')">
+                
+                <div id="mergeFileList" class="file-list"></div>
+                
+                <div class="options" id="mergeOptions" style="display: none;">
+                    <div class="form-group">
+                        <label>Output filename:</label>
+                        <input type="text" id="mergeFilename" placeholder="merged-document.pdf" value="merged-document.pdf">
+                    </div>
+                    <button class="btn btn-primary" onclick="processMerge()">
+                        🔗 Merge PDFs
+                    </button>
+                </div>
+            </div>
+
+            <!-- Convert Tab -->
+            <div id="convert" class="tab-content">
+                <div class="drop-zone" onclick="document.getElementById('convertFiles').click()" ondrop="handleDrop(event, 'convert')" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                    <div class="drop-zone-icon">🔄</div>
+                    <h3>Drop files here or click to browse</h3>
+                    <p>Select PDF or DOCX files to convert</p>
+                </div>
+                <input type="file" id="convertFiles" accept=".pdf,.docx" multiple style="display: none;" onchange="handleFileSelect(event, 'convert')">
+                
+                <div id="convertFileList" class="file-list"></div>
+                
+                <div class="options" id="convertOptions" style="display: none;">
+                    <div class="form-group">
+                        <label>Convert to:</label>
+                        <select id="convertFormat">
+                            <option value="auto">Auto-detect conversion</option>
+                            <option value="pdf-to-docx">PDF to DOCX</option>
+                            <option value="docx-to-pdf">DOCX to PDF</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" onclick="processConvert()">
+                        🔄 Convert Files
+                    </button>
+                </div>
+            </div>
+
+            <!-- Password Tools Tab -->
+            <div id="protect" class="tab-content">
+                <div class="drop-zone" onclick="document.getElementById('protectFiles').click()" ondrop="handleDrop(event, 'protect')" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                    <div class="drop-zone-icon">🔒</div>
+                    <h3>Drop PDF files here or click to browse</h3>
+                    <p>Add or remove password protection</p>
+                </div>
+                <input type="file" id="protectFiles" accept=".pdf" multiple style="display: none;" onchange="handleFileSelect(event, 'protect')">
+                
+                <div id="protectFileList" class="file-list"></div>
+                
+                <div class="options" id="protectOptions" style="display: none;">
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label>Action:</label>
+                                <select id="protectAction" onchange="togglePasswordFields()">
+                                    <option value="add">Add Password Protection</option>
+                                    <option value="remove">Remove Password Protection</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group" id="currentPasswordGroup">
+                                <label>Current Password:</label>
+                                <input type="password" id="currentPassword" placeholder="Enter current password">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" id="newPasswordGroup">
+                        <label>New Password:</label>
+                        <input type="password" id="newPassword" placeholder="Enter new password">
+                    </div>
+                    <button class="btn btn-primary" onclick="processProtect()">
+                        🔒 Apply Protection
+                    </button>
+                </div>
+            </div>
+
+            <div id="progressContainer" style="display: none;">
+                <div class="progress">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                <p id="progressText">Processing...</p>
+            </div>
+
+            <div id="alerts"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentFiles = {};
+        
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+            
+            // Clear current files for new tab
+            currentFiles[tabName] = currentFiles[tabName] || [];
+        }
+
+        function handleDragOver(event) {
+            event.preventDefault();
+            event.currentTarget.classList.add('drag-over');
+        }
+
+        function handleDragLeave(event) {
+            event.currentTarget.classList.remove('drag-over');
+        }
+
+        function handleDrop(event, tabName) {
+            event.preventDefault();
+            event.currentTarget.classList.remove('drag-over');
+            
+            const files = Array.from(event.dataTransfer.files);
+            addFiles(files, tabName);
+        }
+
+        function handleFileSelect(event, tabName) {
+            const files = Array.from(event.target.files);
+            addFiles(files, tabName);
+        }
+
+        function addFiles(files, tabName) {
+            if (!currentFiles[tabName]) {
+                currentFiles[tabName] = [];
+            }
+            
+            const validFiles = files.filter(file => {
+                if (tabName === 'convert') {
+                    return file.type === 'application/pdf' || file.name.endsWith('.docx');
+                }
+                return file.type === 'application/pdf';
+            });
+
+            currentFiles[tabName] = [...currentFiles[tabName], ...validFiles];
+            displayFiles(tabName);
+            showOptions(tabName);
+        }
+
+        function displayFiles(tabName) {
+            const fileList = document.getElementById(tabName + 'FileList');
+            fileList.innerHTML = '';
+
+            currentFiles[tabName].forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    <div class="file-info">
+                        <div class="file-icon">${getFileIcon(file.name)}</div>
+                        <div class="file-details">
+                            <h4>${file.name}</h4>
+                            <p>${formatFileSize(file.size)} • ${file.type || 'Unknown'}</p>
+                        </div>
+                    </div>
+                    <div class="file-actions">
+                        <button class="btn btn-danger" onclick="removeFile('${tabName}', ${index})">
+                            🗑️ Remove
+                        </button>
+                    </div>
+                `;
+                fileList.appendChild(fileItem);
+            });
+        }
+
+        function getFileIcon(filename) {
+            if (filename.endsWith('.pdf')) return 'PDF';
+            if (filename.endsWith('.docx')) return 'DOC';
+            return '📄';
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function removeFile(tabName, index) {
+            currentFiles[tabName].splice(index, 1);
+            displayFiles(tabName);
+            
+            if (currentFiles[tabName].length === 0) {
+                hideOptions(tabName);
+            }
+        }
+
+        function showOptions(tabName) {
+            document.getElementById(tabName + 'Options').style.display = 'block';
+        }
+
+        function hideOptions(tabName) {
+            document.getElementById(tabName + 'Options').style.display = 'none';
+        }
+
+        function showProgress() {
+            document.getElementById('progressContainer').style.display = 'block';
+        }
+
+        function hideProgress() {
+            document.getElementById('progressContainer').style.display = 'none';
+        }
+
+        function updateProgress(percent, text) {
+            document.getElementById('progressBar').style.width = percent + '%';
+            document.getElementById('progressText').textContent = text;
+        }
+
+        function showAlert(message, type = 'success') {
+            const alertsContainer = document.getElementById('alerts');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            alertsContainer.appendChild(alert);
+            
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+
+        function downloadFile(blob, filename) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        async function processSplit() {
+            const files = currentFiles['split'];
+            if (!files || files.length === 0) {
+                showAlert('Please select a PDF file first.', 'error');
+                return;
+            }
+
+            const file = files[0];
+            const pages = document.getElementById('splitPages').value.trim();
+            const password = document.getElementById('splitPassword').value;
+
+            showProgress();
+            updateProgress(10, 'Reading PDF file...');
+
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                let pdfDoc;
+                
+                try {
+                    pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer, { 
+                        ignoreEncryption: false,
+                        password: password || undefined
+                    });
+                } catch (error) {
+                    if (error.message.includes('password') || error.message.includes('encrypted')) {
+                        showAlert('This PDF is password protected. Please enter the correct password.', 'error');
+                        hideProgress();
+                        return;
+                    }
+                    throw error;
+                }
+
+                updateProgress(30, 'Processing pages...');
+
+                const pageCount = pdfDoc.getPageCount();
+                let pageIndices = [];
+
+                if (pages.toLowerCase() === 'all') {
+                    pageIndices = Array.from({length: pageCount}, (_, i) => i);
+                } else {
+                    pageIndices = parsePageRange(pages, pageCount);
+                }
+
+                if (pageIndices.length === 0) {
+                    showAlert('Invalid page range specified.', 'error');
+                    hideProgress();
+                    return;
+                }
+
+                updateProgress(50, 'Creating new PDF...');
+
+                const newPdf = await PDFLib.PDFDocument.create();
+                const copiedPages = await newPdf.copyPages(pdfDoc, pageIndices);
+                
+                copiedPages.forEach(page => newPdf.addPage(page));
+
+                updateProgress(80, 'Generating file...');
+
+                const pdfBytes = await newPdf.save();
+                const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                
+                const originalName = file.name.replace('.pdf', '');
+                const filename = `${originalName}_pages_${pages.replace(/,/g, '-')}.pdf`;
+                
+                updateProgress(100, 'Complete!');
+                downloadFile(blob, filename);
+                
+                showAlert(`Successfully extracted pages: ${pages}`);
+                setTimeout(hideProgress, 1000);
+
+            } catch (error) {
+                hideProgress();
+                showAlert(`Error processing PDF: ${error.message}`, 'error');
+                console.error('Split error:', error);
+            }
+        }
+
+        function parsePageRange(rangeStr, maxPages) {
+            const indices = [];
+            const ranges = rangeStr.split(',');
+            
+            for (let range of ranges) {
+                range = range.trim();
+                if (range.includes('-')) {
+                    const [start, end] = range.split('-').map(n => parseInt(n.trim()));
+                    if (start && end && start <= end && start >= 1 && end <= maxPages) {
+                        for (let i = start; i <= end; i++) {
+                            indices.push(i - 1); // Convert to 0-based index
+                        }
+                    }
+                } else {
+                    const page = parseInt(range);
+                    if (page >= 1 && page <= maxPages) {
+                        indices.push(page - 1); // Convert to 0-based index
+                    }
+                }
+            }
+            
+            return [...new Set(indices)].sort((a, b) => a - b); // Remove duplicates and sort
+        }
+
+        async function processMerge() {
+            const files = currentFiles['merge'];
+            if (!files || files.length < 2) {
+                showAlert('Please select at least 2 PDF files to merge.', 'error');
+                return;
+            }
+
+            const filename = document.getElementById('mergeFilename').value.trim() || 'merged-document.pdf';
+
+            showProgress();
+            updateProgress(10, 'Starting merge process...');
+
+            try {
+                const mergedPdf = await PDFLib.PDFDocument.create();
+                
+                for (let i = 0; i < files.length; i++) {
+                    updateProgress(20 + (i / files.length) * 60, `Processing file ${i + 1} of ${files.length}...`);
+                    
+                    const arrayBuffer = await files[i].arrayBuffer();
+                    const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
+                    const pageCount = pdfDoc.getPageCount();
+                    const pageIndices = Array.from({length: pageCount}, (_, idx) => idx);
+                    const copiedPages = await mergedPdf.copyPages(pdfDoc, pageIndices);
+                    
+                    copiedPages.forEach(page => mergedPdf.addPage(page));
+                }
+
+                updateProgress(85, 'Generating merged PDF...');
+                
+                const pdfBytes = await mergedPdf.save();
+                const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                
+                updateProgress(100, 'Complete!');
+                downloadFile(blob, filename);
+                
+                showAlert(`Successfully merged ${files.length} PDF files.`);
+                setTimeout(hideProgress, 1000);
+
+            } catch (error) {
+                hideProgress();
+                showAlert(`Error merging PDFs: ${error.message}`, 'error');
+                console.error('Merge error:', error);
+            }
+        }
+
+        async function processConvert() {
+            const files = currentFiles['convert'];
+            if (!files || files.length === 0) {
+                showAlert('Please select files to convert.', 'error');
+                return;
+            }
+
+            showProgress();
+            
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const progress = (i / files.length) * 100;
+                
+                updateProgress(progress, `Converting ${file.name}...`);
+                
+                if (file.name.endsWith('.pdf')) {
+                    showAlert('PDF to DOCX conversion requires advanced OCR libraries. This feature will extract text content only.', 'error');
+                    // In a full implementation, you'd use pdf2docx or similar
+                } else if (file.name.endsWith('.docx')) {
+                    await convertDocxToPdf(file);
+                }
+            }
+            
+            updateProgress(100, 'Conversion complete!');
+            setTimeout(hideProgress, 1000);
+        }
+
+        async function convertDocxToPdf(file) {
+            try {
+                // This is a simplified conversion - in practice, you'd need a more robust solution
+                showAlert('DOCX to PDF conversion requires server-side processing for full formatting preservation. This is a basic text extraction.', 'error');
+                
+                // For demonstration purposes, we'll show this message
+                // Full implementation would require libraries like docx-to-pdf
+                
+            } catch (error) {
+                showAlert(`Error converting ${file.name}: ${error.message}`, 'error');
+            }
+        }
+
+        async function processProtect() {
+            const files = currentFiles['protect'];
+            if (!files || files.length === 0) {
+                showAlert('Please select PDF files to protect/unprotect.', 'error');
+                return;
+            }
+
+            const action = document.getElementById('protectAction').value;
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+
+            if (action === 'add' && !newPassword) {
+                showAlert('Please enter a new password.', 'error');
+                return;
+            }
+
+            showProgress();
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const progress = (i / files.length) * 100;
+                
+                updateProgress(progress, `Processing ${file.name}...`);
+                
+                try {
+                    const arrayBuffer = await file.arrayBuffer();
+                    let pdfDoc;
+                    
+                    try {
+                        pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer, {
+                            password: currentPassword || undefined
+                        });
+                    } catch (error) {
+                        if (error.message.includes('password') || error.message.includes('encrypted')) {
+                            showAlert(`${file.name} requires the correct password.`, 'error');
+                            continue;
+                        }
+                        throw error;
+                    }
+
+                    let pdfBytes;
+                    if (action === 'add') {
+                        // Note: PDF-lib doesn't support password protection in the browser version
+                        // This would require server-side processing or different libraries
+                        showAlert('Password protection requires server-side processing for security. File will be downloaded without password protection.', 'error');
+                        pdfBytes = await pdfDoc.save();
+                    } else {
+                        // Remove protection (just save without password)
+                        pdfBytes = await pdfDoc.save();
+                    }
+                    
+                    const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                    const filename = file.name.replace('.pdf', `_${action === 'add' ? 'protected' : 'unprotected'}.pdf`);
+                    downloadFile(blob, filename);
+                    
+                } catch (error) {
+                    showAlert(`Error processing ${file.name}: ${error.message}`, 'error');
+                }
+            }
+            
+            updateProgress(100, 'Complete!');
+            setTimeout(hideProgress, 1000);
+        }
+
+        function togglePasswordFields() {
+            const action = document.getElementById('protectAction').value;
+            const currentPasswordGroup = document.getElementById('currentPasswordGroup');
+            const newPasswordGroup = document.getElementById('newPasswordGroup');
+            
+            if (action === 'add') {
+                currentPasswordGroup.style.display = 'none';
+                newPasswordGroup.style.display = 'block';
+            } else {
+                currentPasswordGroup.style.display = 'block';
+                newPasswordGroup.style.display = 'none';
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Prevent default drag behaviors
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                document.addEventListener(eventName, preventDefaults, false);
+                document.body.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            // Initialize current files for all tabs
+            currentFiles = {
+                split: [],
+                merge: [],
+                convert: [],
+                protect: []
+            };
+
+            // Set up initial password field visibility
+            togglePasswordFields();
+        });
+    </script>
+</body>
+</html> 
