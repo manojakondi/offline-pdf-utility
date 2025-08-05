@@ -7,6 +7,17 @@ An **AI-coded**, completely offline, single-page PDF utility offering various PD
 No setup required!  
 Just clone the repo and open the HTML page in your browser.
 
+## Prompt Used
+
+I prompted Claude iteratively, providing more information with each iteration.
+
+> This will be an offline app  
+> It will provide all basic PDF functionalities : Extracting pages, merging two or more PDFs, conversion to and from docx etc.
+
+> Simple drag and drop  
+> All functionalities are important  
+> It should be able to handle password-protected PDFs, maintain formatting.
+
 ## Technologies
 
 - HTML
