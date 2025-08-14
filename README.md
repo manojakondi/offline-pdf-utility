@@ -1,81 +1,58 @@
-# PDF Toolkit
+# Offline PDF Utility
 
-An **AI-coded**, completely offline PDF toolkit offering comprehensive PDF operations including splitting, merging, converting, editing, compressing, and password protection—all in your browser with full privacy.
-
-## Setup
-
-No complex setup required! Choose any of these simple methods to get started:
-
-### Quick Start (Recommended)
-1. Download the latest release or clone the repository
-2. Open `index.html` directly in your browser
-
-### Local Server Method (For Development)
-1. Fork the repository
-2. Clone your fork: `git clone https://github.com/your-username/offline-pdf-utility.git`
-3. Navigate to the project directory
-4. Start a local server:
-   - Python: `python -m http.server 8000`
-   - Node.js: `npx http-server`
-5. Open `http://localhost:8000` in your browser
-
-### Project Structure
-The application follows a modular architecture for better organization:
-- `index.html` - Main application file
-- `assets/css/` - Dedicated CSS files for styling
-- `assets/js/` - JavaScript modules for functionality
-- `assets/images/` - Image assets and icons
-- `README.md` - This documentation file
-
-## Technologies
-
-- HTML5
-- CSS3 (Modular structure with dedicated component styles)
-- JavaScript (ES6+ with modular architecture)
-- PDF-Lib.js (PDF manipulation)
-- Mammoth.js (Word document processing)
-- PDF.js (PDF rendering)
-- Claude Sonnet 4/Qwen-Coder3 on Windsurf
-
-## Features
-
-- **Completely Offline** – Full privacy ensured with zero server-side processing
-- **Split PDF** – Extract specific pages or page ranges with precise control
-- **Merge PDFs** – Combine multiple PDFs into one seamless document
-- **Edit Pages** – Rotate, reorder (full drag-and-drop), and delete specific pages
-- **Convert Files** – Images to PDF, PDF to images, Word docs to PDF, text files to PDF
-- **Compress PDF** – Reduce file size while maintaining quality
-- **Password Tools** – Add or remove password protection with AES-256 encryption
-- **Modern UI** – Clean, responsive design with intuitive drag-and-drop functionality and elegant theme
-- **Enhanced User Experience** – Smooth animations, visual feedback, and consistent interface design
+An **AI-coded**, completely offline PDF toolkit built with React and TypeScript, featuring a stunning glassmorphism UI. Perform all PDF operations securely in your browser with complete privacy.
 
 ## App Interface
 
-![PDF Toolkit Interface](assets/images/screenshot.png)
+![Offline PDF Utility Interface](PDF-Utility-Professional-Document-Tools.png)
 
-*Updated interface with enhanced drag-and-drop page reordering, improved tab visibility, and elegant color scheme*
+## Features
 
-## Limitations
+- **100% Offline**: Your files are never uploaded to a server, ensuring maximum privacy and security.
+- **Modern UI**: A beautiful and intuitive glassmorphism interface built with the Lovable UI framework.
+- **Split PDF**: Extract specific pages or page ranges from a PDF.
+- **Merge PDF**: Combine multiple PDF documents into a single file.
+- **Unlock PDF**: Remove password protection from encrypted PDF files.
+- **Edit Metadata**: Modify your PDF's title, author, subject, and keywords.
+- **Convert to PDF**: Convert JPEG, PNG, or DOCX files to PDF format.
+- **Add Watermark**: Apply a text watermark to every page of your PDF.
 
-- Large PDF files may require significant processing time and memory
-- Browser compatibility limited to modern browsers supporting HTML5 and ES6+
-- File size limitations based on browser memory constraints
-- No cloud storage integration (by design for privacy)
-- Advanced PDF features (annotations, forms) not yet supported
+## Technologies
+
+- **React**: A JavaScript library for building user interfaces.
+- **TypeScript**: A typed superset of JavaScript that compiles to plain JavaScript.
+- **Vite**: A fast and modern build tool for web development.
+- **pdf-lib**: A JavaScript library for creating and modifying PDF documents.
+- **mammoth.js**: A library for converting .docx files to HTML.
+- **html2pdf.js**: A library to generate PDFs from HTML.
+- **Lovable UI**: A stunning, modern UI framework.
+- **AI-Assisted Development**: Coded with the help of Cascade, an agentic AI coding assistant.
+
+## Setup and Development
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/your-username/offline-pdf-utility.git
+   cd offline-pdf-utility
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Run the development server:**
+   ```bash
+   npm run dev
+   ```
+
+4. **Open the application:**
+   Open your browser and navigate to the local URL provided by Vite (usually `http://localhost:5173`).
 
 ## Contribution Guidelines
 
-We welcome contributions! Here's how you can help:
-
-1. **Report Issues** - Found a bug or have a feature idea? Open an issue with a clear description.
-2. **Code Contributions** - Fork the repo, make your changes, and submit a pull request.
-3. **Feature Requests** - Suggest new features, especially those you've seen in popular online PDF tools or some new ones which those tools don't support.
-
-Before submitting a PR, please:
-- Create an issue to discuss significant changes
-- Ensure your code follows the existing style
-- Test your changes thoroughly
+We welcome contributions! If you have an idea for a new feature or have found a bug, please open an issue to discuss it. Pull requests are also welcome.
 
 ## Contact
 
-Reach out via [GitHub Issues](../../issues) or on X ([@code_chaios](https://x.com/code_chaios)).
+For any questions or feedback, please reach out via [GitHub Issues](../../issues).
