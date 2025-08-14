@@ -17,6 +17,20 @@ An **AI-coded**, completely offline PDF toolkit built with React and TypeScript,
 - **Convert to PDF**: Convert JPEG, PNG, or DOCX files to PDF format.
 - **Add Watermark**: Apply a text watermark to every page of your PDF.
 
+## How to Use
+
+This tool is designed to be simple and intuitive. All processing happens directly in your browser, ensuring your files remain private.
+
+1.  **Open the Application**: Access the PDF Utility through the provided live URL or by running it locally (see [Setup and Development](#setup-and-development)).
+2.  **Choose a Tool**: From the main dashboard, click on the tool you need, such as "Split PDF" or "Add Watermark".
+3.  **Follow the Steps**: Each tool will present you with simple options. This usually involves:
+    *   Uploading your PDF or image file(s).
+    *   Filling in any required fields (like page numbers for splitting or text for a watermark).
+4.  **Process Your File**: Click the main action button for the tool.
+5.  **Download Your File**: Your new, modified file will be automatically downloaded by your browser.
+
+That's it! No complex steps, just a straightforward tool for your PDF needs.
+
 ## Technologies
 
 - **React**: A JavaScript library for building user interfaces.
