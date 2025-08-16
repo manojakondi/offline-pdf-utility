@@ -6,7 +6,6 @@
 .pnp.js
 
 # Build output
-/dist
 /build
 
 # Logs

@@ -31,6 +31,28 @@ This tool is designed to be simple and intuitive. All processing happens directl
 
 That's it! No complex steps, just a straightforward tool for your PDF needs.
 
+## Offline Usage (No Internet Required)
+
+For a truly offline experience, you can run this application without any internet connection, not even for the first time.
+
+### For Developers (Creating the Offline Version)
+
+1.  **Build the application**:
+
+    ```bash
+    npm run build
+    ```
+
+2.  **Package the files**:
+    This will create a `dist` folder containing all the necessary files. Compress this `dist` folder into a `.zip` file (e.g., `offline-pdf-utility.zip`).
+
+### For End-Users
+
+1.  **Download and Unzip**: Get the `.zip` file from the developer and unzip it on your computer.
+2.  **Open the App**: Navigate into the unzipped folder and open the `index.html` file directly in your web browser.
+
+The application will now be running completely from your local machine.
+
 ## Technologies
 
 - **React**: A JavaScript library for building user interfaces.
