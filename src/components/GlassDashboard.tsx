@@ -8,7 +8,9 @@ import {
   Minimize, 
   Lock,
   Shield,
-  Sparkles
+  Sparkles,
+  ArrowUpDown,
+  FileDown
 } from "lucide-react";
 import { GlassPDFCard } from "./GlassPDFCard";
 import { SplitTool } from './tools/SplitTool';
@@ -17,12 +19,14 @@ import { UnlockTool } from './tools/UnlockTool';
 import { EditTool } from './tools/EditTool';
 import { AddWatermarkTool } from './tools/AddWatermarkTool';
 import { ConvertTool } from './tools/ConvertTool';
+import { OrganizeTool } from './tools/OrganizeTool';
+import { CompressTool } from './tools/CompressTool';
 
 const pdfTools = [
   {
     id: "split",
     title: "Split PDF",
-    description: "Extract pages or divide documents with surgical precision.",
+    description: "Split PDF into individual pages and download as a ZIP archive.",
     icon: Scissors,
   },
   {
@@ -30,6 +34,12 @@ const pdfTools = [
     title: "Merge PDF",
     description: "Combine multiple PDF documents into a single file.",
     icon: Copy,
+  },
+  {
+    id: "organize",
+    title: "Organize PDF",
+    description: "Reorganize PDF pages with drag-and-drop and visual previews.",
+    icon: ArrowUpDown,
   },
   {
     id: "edit",
@@ -54,6 +64,12 @@ const pdfTools = [
     title: "Add Watermark",
     description: "Apply a text watermark to every page of your PDF.",
     icon: Sparkles,
+  },
+  {
+    id: "compress",
+    title: "Compress PDF",
+    description: "Reduce PDF file size while maintaining quality with three compression levels.",
+    icon: FileDown,
   },
 ];
 
@@ -89,13 +105,23 @@ export const GlassDashboard = () => {
         {/* Tools grid with staggered animations */}
               {activeTool ? (
         <div>
-          <button onClick={() => setActiveTool(null)} className="text-white mb-4">Back to Tools</button>
+          <button 
+            onClick={() => setActiveTool(null)} 
+            className="mb-6 px-4 py-2 bg-glass-bg backdrop-blur-sm border border-glass-border rounded-lg text-white hover:bg-glass-bg/80 transition-all duration-200 flex items-center space-x-2"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            <span>Back to Tools</span>
+          </button>
           {activeTool === 'split' && <SplitTool />}
           {activeTool === 'merge' && <MergeTool />}
+          {activeTool === 'organize' && <OrganizeTool />}
           {activeTool === 'unlock' && <UnlockTool />}
           {activeTool === 'edit' && <EditTool />}
           {activeTool === 'convert' && <ConvertTool />}
           {activeTool === 'watermark' && <AddWatermarkTool />}
+          {activeTool === 'compress' && <CompressTool />}
           {/* Other tools will be rendered here */}
         </div>
       ) : (
